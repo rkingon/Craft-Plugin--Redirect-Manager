@@ -1,0 +1,2 @@
+Craft-Plugin--Redirect-Manager
+==============================
