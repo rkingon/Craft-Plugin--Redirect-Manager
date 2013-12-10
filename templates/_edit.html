@@ -1,0 +1,69 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% set redirectId = (redirectId is defined) ? redirectId : null %}
+{% set redirectRecord = (redirectId) ? craft.redirectManager.getRedirectById(redirectId) : null %}
+
+{% if redirectId and not redirectRecord %}
+	{% exit 404 %}
+{% endif %}
+
+{% set title = redirectRecord ? "Edit Redirect"|t : "New Redirect"|t %}
+{% set crumbs = [
+	{ label: "Redirect Manager"|t, url: url('redirectmanager') }
+] %}
+
+
+
+{% set content %}
+
+	<form method="post" action="" accept-charset="UTF-8">
+		<input type="hidden" name="action" value="redirectmanager/saveRedirect" />
+		<input type="hidden" name="redirect" value="redirectmanager/{redirectId}" />
+		<input type="hidden" name="redirectId" value="{{ redirectId }}" />
+		
+		<p>
+			{{ forms.textField({
+				label: 'Match URI'|t,
+				required: true,
+				name: 'redirectRecord[uri]',
+				value: redirectRecord ? redirectRecord.uri : null,
+				errors: redirectRecord ? redirectRecord.errors('uri') : null,
+				instructions: "Regex: Wrap in '#' (Example: #^products(.\&#42;)$)<br>Wildcard: Use asterik (Example: products\&#42;)"
+			}) }}
+		</p>
+		
+		<p>
+			{{ forms.textField({
+				label: 'Redirect To'|t,
+				required: true,
+				name: 'redirectRecord[location]',
+				value: redirectRecord ? redirectRecord.location : null,
+				errors: redirectRecord ? redirectRecord.errors('redirect') : null,
+				instructions: "For External: Use 'http://'<br>For Capture Groups: Use $1, $2, ect (Example: shop/$1)"
+			}) }}
+		</p>
+		
+		<p>
+			{{ forms.selectField({
+				label: 'Redirect Type'|t,
+				required: true,
+				name: 'redirectRecord[type]',
+				value: redirectRecord ? redirectRecord.type : null,
+				errors: redirectRecord ? redirectRecord.errors('type') : null,
+				options: [{
+					label: "301",
+					value: "301"
+				},{
+					label: "302",
+					value: "302"
+				}]
+			}) }}
+		</p>
+		
+		<div class="buttons">
+			<input type="submit" class="btn submit" value="{{ 'Save'|t }}">
+		</div>
+	</form>
+
+{% endset %}
