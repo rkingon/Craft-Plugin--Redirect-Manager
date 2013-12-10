@@ -21,3 +21,12 @@ For wildcards use an asterisk. (Example: "products*" will match products and pro
 ##### Wildcard Examples:
 * "products/*" will only match sub level's of products
 * "products*" will match: products and products/anything-else
+
+#### Capture Groups
+Capture groups are just used by the standard $1, $2, ect. within your "Redirect To" field.
+
+##### Capture Goup Example:
+**URI To Match:** "#^products(.*)#"
+**Redirect To:** "shop$1"
+
+*Note, we do not include the "/" because it will be part of the capture group*
