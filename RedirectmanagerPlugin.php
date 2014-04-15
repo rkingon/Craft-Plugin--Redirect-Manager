@@ -23,12 +23,12 @@ class RedirectmanagerPlugin extends BasePlugin
 	{
 		return 'http://www.roikingon.com';
 	}
-	
+
 	public function hasCpSection()
 	{
 		return true;
 	}
-	
+
 	public function init()
 	{
 		// redirects only take place out of the CP
@@ -41,8 +41,8 @@ class RedirectmanagerPlugin extends BasePlugin
 			}
 		}
 	}
-	
-	public function hookRegisterCpRoutes()
+
+	public function registerCpRoutes()
 	{
 		return array(
 			'redirectmanager\/new' => 'redirectmanager/_edit',
@@ -54,7 +54,7 @@ class RedirectmanagerPlugin extends BasePlugin
 		$redirects = array(
 			array('uri' => '#^bad(.*)$#', 'location' => 'good$1', 'type' => "302")
 		);
-		
+
 		foreach ($redirects as $redirect) {
 			craft()->db->createCommand()->insert('redirectmanager', $redirect);
 		}
