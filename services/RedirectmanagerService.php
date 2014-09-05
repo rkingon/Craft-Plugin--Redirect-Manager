@@ -14,32 +14,35 @@ class RedirectmanagerService extends BaseApplicationComponent
 			$this->redirectRecord = RedirectmanagerRecord::model();
 		}
 	}
-	
+
 	public function processRedirect($uri)
 	{
 		$records = $this->getAllRedirects();
 		$doRedirect = false;
-		
+
 		foreach($records as $record)
 		{
 			$record = $record->attributes;
-			
+
+			// trim to tolerate whitespace in user entry
+			$record['uri'] = trim($record['uri']);
+
 			// Standard match
 			if ($record['uri'] == $uri)
 			{
 				$redirectLocation = $record['location'];
 				break;
 			}
-			
+
 			// Regex / wildcard match
 			if(preg_match("/^#(.+)#$/", $record['uri'], $matches)){
-				$record['uri'] = $matches[1];
+				// no-op: all set to use the regex
 			}elseif(strpos($record['uri'], "*")){
-				$record['uri'] = "^".str_replace(array("*","/"), array("(.*)", "\/"), $record['uri']);
+				// not necessary to replace / with \/ here, but no harm to it either
+				$record['uri'] = "#^".str_replace(array("*","/"), array("(.*)", "\/"), $record['uri']).'#';
 			}
-			
-			if(preg_match("/".$record['uri']."/", $uri)){
-				$redirectLocation = preg_replace("/".$record['uri']."/", $record['location'], $uri);
+			if(preg_match($record['uri'], $uri)){
+				$redirectLocation = preg_replace($record['uri'], $record['location'], $uri);
 				break;
 			}
 		}
@@ -94,15 +97,15 @@ class RedirectmanagerService extends BaseApplicationComponent
 	{
 		return $this->redirectRecord->deleteByPk($id);
 	}
-	
+
 	private function _processRegexMatch($uriToMatch, $uri)
 	{
 		preg_match("/^#(.+)#$/", $uriToMatch, $matches);
 		// return ($matches[1] == $uri) ;
 	}
-	
+
 	private function _processWildcardMatch($val)
 	{
-		
+
 	}
 }
