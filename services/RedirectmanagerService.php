@@ -37,7 +37,7 @@ class RedirectmanagerService extends BaseApplicationComponent
 			// Regex / wildcard match
 			if(preg_match("/^#(.+)#$/", $record['uri'], $matches)){
 				// no-op: all set to use the regex
-			}elseif(strpos($record['uri'], "*")){
+			}else{
 				// not necessary to replace / with \/ here, but no harm to it either
 				$record['uri'] = "#^".str_replace(array("*","/"), array("(.*)", "\/"), $record['uri']).'#';
 			}
