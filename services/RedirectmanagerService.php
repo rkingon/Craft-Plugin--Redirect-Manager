@@ -27,23 +27,29 @@ class RedirectmanagerService extends BaseApplicationComponent
 			// trim to tolerate whitespace in user entry
 			$record['uri'] = trim($record['uri']);
 
-			// Standard match
-			if ($record['uri'] == $uri)
-			{
-				$redirectLocation = $record['location'];
-				break;
-			}
-
-			// Regex / wildcard match
-			if(preg_match("/^#(.+)#$/", $record['uri'], $matches)){
-				// no-op: all set to use the regex
-			}elseif(strpos($record['uri'], "*")){
+			// type of match. 3 possibilities:
+			// standard match (no *, no initial and final #) - regex_match = false
+			// regex match (initial and final # (may also contain *)) - regex_match = true
+			// wildcard match (no initial and final #, but does have *) - regex_match = true
+			$regex_match = false;
+			if(preg_match("/^#(.+)#$/", $record['uri'], $matches)) {
+				// all set to use the regex
+				$regex_match = true;
+			} elseif (strpos($record['uri'], "*")) {
 				// not necessary to replace / with \/ here, but no harm to it either
 				$record['uri'] = "#^".str_replace(array("*","/"), array("(.*)", "\/"), $record['uri']).'#';
+				$regex_match = true;
 			}
-			if(preg_match($record['uri'], $uri)){
-				$redirectLocation = preg_replace($record['uri'], $record['location'], $uri);
-				break;
+			if ($regex_match) {
+				if(preg_match($record['uri'], $uri)){
+					$redirectLocation = preg_replace($record['uri'], $record['location'], $uri);
+				}
+			} else {
+				// Standard match
+				if ($record['uri'] == $uri)
+				{
+					$redirectLocation = $record['location'];
+				}
 			}
 		}
 		return (isset($redirectLocation)) ? array("url" => ( strpos($record['location'], "http") === 0 ) ? $redirectLocation : UrlHelper::getSiteUrl($redirectLocation), "type" => $record['type']) : false;
