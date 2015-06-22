@@ -31,8 +31,8 @@ class RedirectmanagerPlugin extends BasePlugin
 
 	public function init()
 	{
-		// redirects only take place out of the CP
-		if(craft()->request->isSiteRequest()){
+		// redirects only take place out of the CP (and should not happen in live preview)
+		if(craft()->request->isSiteRequest() && !craft()->request->isLivePreview()){
 			$path = craft()->request->getPath();
 			if( $location = craft()->redirectmanager->processRedirect($path) )
 			{
