@@ -34,6 +34,10 @@ class RedirectmanagerPlugin extends BasePlugin
 		// redirects only take place out of the CP (and should not happen in live preview)
 		if(craft()->request->isSiteRequest() && !craft()->request->isLivePreview()){
 			$path = craft()->request->getPath();
+			if (craft()->request->getQueryString())
+			{
+				$path = $path . '?' . craft()->request->getQueryString();
+			}
 			if( $location = craft()->redirectmanager->processRedirect($path) )
 			{
 				header("Location: ".$location['url'], true, $location['type']);
