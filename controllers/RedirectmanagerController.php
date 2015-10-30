@@ -2,22 +2,22 @@
 
 namespace Craft;
 
-class RedirectmanagerController extends BaseController
+class RedirectManagerController extends BaseController
 {
 	public function actionSaveRedirect()
 	{
 		$this->requirePostRequest();
 		
 		if ($id = craft()->request->getPost('redirectId')) {
-			$model = craft()->redirectmanager->getRedirectById($id);
+			$model = craft()->redirectManager->getRedirectById($id);
 		} else {
-			$model = craft()->redirectmanager->newRedirect($id);
+			$model = craft()->redirectManager->newRedirect($id);
 		}
 		
 		$attributes = craft()->request->getPost('redirectRecord');
 		$model->setAttributes($attributes);
 		
-		if (craft()->redirectmanager->saveRedirect($model)) {
+		if (craft()->redirectManager->saveRedirect($model)) {
 			craft()->userSession->setNotice(Craft::t('Redirect saved.'));
 			return $this->redirectToPostedUrl(array('redirectId' => $model->getAttribute('id')));
 		} else {
@@ -33,7 +33,7 @@ class RedirectmanagerController extends BaseController
 		$this->requireAjaxRequest();
 		
 		$id = craft()->request->getRequiredPost('id');
-		craft()->redirectmanager->deleteRedirectById($id);
+		craft()->redirectManager->deleteRedirectById($id);
 		
 		$this->returnJson(array('success' => true));
 	}

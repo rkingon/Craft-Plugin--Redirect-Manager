@@ -2,7 +2,7 @@
 
 namespace Craft;
 
-class RedirectmanagerModel extends BaseModel
+class RedirectManagerModel extends BaseModel
 {
 	public function defineAttributes()
 	{

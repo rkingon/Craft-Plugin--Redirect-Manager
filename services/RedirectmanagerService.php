@@ -2,7 +2,7 @@
 
 namespace Craft;
 
-class RedirectmanagerService extends BaseApplicationComponent
+class RedirectManagerService extends BaseApplicationComponent
 {
 	protected $redirectRecord;
 
@@ -11,7 +11,7 @@ class RedirectmanagerService extends BaseApplicationComponent
 	{
 		$this->redirectRecord = $redirectRecord;
 		if (is_null($this->redirectRecord)) {
-			$this->redirectRecord = RedirectmanagerRecord::model();
+			$this->redirectRecord = RedirectManagerRecord::model();
 		}
 	}
 
@@ -57,7 +57,7 @@ class RedirectmanagerService extends BaseApplicationComponent
 
 	public function newRedirect($attributes = array())
 	{
-		$model = new RedirectmanagerModel();
+		$model = new RedirectManagerModel();
 		$model->setAttributes($attributes);
 
 		return $model;
@@ -66,17 +66,17 @@ class RedirectmanagerService extends BaseApplicationComponent
 	public function getAllRedirects()
 	{
 		$records = $this->redirectRecord->findAll(array('order'=>'id'));
-		return RedirectmanagerModel::populateModels($records, 'id');
+		return RedirectManagerModel::populateModels($records, 'id');
 	}
 
 	public function getRedirectById($id)
 	{
 		if ($record = $this->redirectRecord->findByPk($id)) {
-			return RedirectmanagerModel::populateModel($record);
+			return RedirectManagerModel::populateModel($record);
 		}
 	}
 
-	public function saveRedirect(RedirectmanagerModel &$model)
+	public function saveRedirect(RedirectManagerModel &$model)
 	{
 		if ($id = $model->getAttribute('id')) {
 			if (null === ($record = $this->redirectRecord->findByPk($id))) {

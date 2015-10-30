@@ -2,7 +2,7 @@
 
 namespace Craft;
 
-class RedirectmanagerRecord extends BaseRecord
+class RedirectManagerRecord extends BaseRecord
 {
 	
 	public function getTableName()

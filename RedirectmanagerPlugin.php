@@ -2,7 +2,7 @@
 
 namespace Craft;
 
-class RedirectmanagerPlugin extends BasePlugin
+class RedirectManagerPlugin extends BasePlugin
 {
 	public function getName()
 	{
@@ -11,7 +11,7 @@ class RedirectmanagerPlugin extends BasePlugin
 
 	public function getVersion()
 	{
-		return 'Beta';
+		return '1.9.1';
 	}
 
 	public function getDeveloper()
@@ -31,18 +31,26 @@ class RedirectmanagerPlugin extends BasePlugin
 
 	public function init()
 	{
-		// redirects only take place out of the CP (and should not happen in live preview)
-		if(craft()->request->isSiteRequest() && !craft()->request->isLivePreview()){
-			$path = craft()->request->getPath();
-			if (craft()->request->getQueryString())
+		// redirects only take place out of the CP
+		if(craft()->request->isSiteRequest() && !craft()->request->isLivePreview())
+		{
+			// only init if it's a legit 404
+			craft()->onException = function(\CExceptionEvent $event)
 			{
-				$path = $path . '?' . craft()->request->getQueryString();
-			}
-			if( $location = craft()->redirectmanager->processRedirect($path) )
-			{
-				header("Location: ".$location['url'], true, $location['type']);
-				exit();
-			}
+				if($event->exception->statusCode)
+				{
+					$path = craft()->request->getPath();
+					$query = craft()->request->getQueryStringWithoutPath();
+					if ($query)
+					{
+						$path .= '?' . $query;
+					}
+					if( $location = craft()->redirectManager->processRedirect($path) )
+					{
+						craft()->request->redirect($location['url'], true, $location['type']);
+					}
+				}
+			};
 		}
 	}
 
