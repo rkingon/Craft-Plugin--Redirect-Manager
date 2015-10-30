@@ -37,7 +37,7 @@ class RedirectManagerPlugin extends BasePlugin
 			// only init if it's a legit 404
 			craft()->onException = function(\CExceptionEvent $event)
 			{
-				if($event->exception->statusCode)
+				if($event->exception->statusCode == 404)
 				{
 					$path = craft()->request->getPath();
 					$query = craft()->request->getQueryStringWithoutPath();
