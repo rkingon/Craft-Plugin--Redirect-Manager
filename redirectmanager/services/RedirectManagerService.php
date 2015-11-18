@@ -51,8 +51,13 @@ class RedirectManagerService extends BaseApplicationComponent
 					$redirectLocation = $record['location'];
 				}
 			}
+            //If a matching redirect is found set the record and exit the loop
+            if(isset($redirectLocation)){
+                $recordMatch = array("url" => ( strpos($record['location'], "http") === 0 ) ? $redirectLocation : UrlHelper::getSiteUrl($redirectLocation), "type" => $record['type']);
+                break;
 		}
-		return (isset($redirectLocation)) ? array("url" => ( strpos($record['location'], "http") === 0 ) ? $redirectLocation : UrlHelper::getSiteUrl($redirectLocation), "type" => $record['type']) : false;
+		}
+		return (isset($recordMatch)) ? $recordMatch : false;
 	}
 
 	public function newRedirect($attributes = array())
