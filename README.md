@@ -7,6 +7,23 @@ Keep all your 301/302 managed within Craft. Very useful when using NGINX because
 * Upload to plugins/redirectmanager
 * Install Plugin (Settings -> Plugins -> Redirect Manager)
 
+## Configuration
+Configuration File Locations:
+
+* config.php under craft/plugins/redirectmanager
+* redirectmanager.php under craft/config
+
+Options:
+
+* ignoreCase (Boolean) - If set to true redirects will ignore case sensitivity. Defaults to false.
+
+##### Example config.php/redirectmanager.php:
+`<?php
+    return array(
+        'ignoreCase' => true,
+    );
+?>`
+
 ## Usage
 
 #### Regex
