@@ -47,6 +47,7 @@ class RedirectManagerPlugin extends BasePlugin
 					}
 					if( $location = craft()->redirectManager->processRedirect($path) )
 					{
+						$event->handled = true;
 						craft()->request->redirect($location['url'], true, $location['type']);
 					}
 				}
