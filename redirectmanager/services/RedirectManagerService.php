@@ -20,6 +20,10 @@ class RedirectManagerService extends BaseApplicationComponent
 		$records = $this->getAllRedirects();
 		$doRedirect = false;
 
+        //Check plugin configuration for case insensitivity
+        $ignoreCase = $this->isCaseInsensitive();
+
+
 		foreach($records as $record)
 		{
 			$record = $record->attributes;
@@ -41,18 +45,24 @@ class RedirectManagerService extends BaseApplicationComponent
 				$regex_match = true;
 			}
 			if ($regex_match) {
-				if(preg_match($record['uri'], $uri)){
-					$redirectLocation = preg_replace($record['uri'], $record['location'], $uri);
+                //Change record's URI RegEx if ignore case
+                $recordUriRegex = ($ignoreCase) ? $record['uri']."i" : $record['uri'];
+				if(preg_match($recordUriRegex, $uri)){
+					$redirectLocation = preg_replace($recordUriRegex, $record['location'], $uri);
 				}
 			} else {
-				// Standard match
-				if ($record['uri'] == $uri)
-				{
-					$redirectLocation = $record['location'];
-				}
+				// Standard match case insensitive
+                if( ($record['uri'] === $uri) OR ($ignoreCase && strtolower($record['uri']) === strtolower($uri)) ){
+                    $redirectLocation = $record['location'];
+                }
 			}
+            //If a matching redirect is found set the record and exit the loop
+            if(isset($redirectLocation)){
+                $recordMatch = array("url" => ( strpos($record['location'], "http") === 0 ) ? $redirectLocation : UrlHelper::getSiteUrl($redirectLocation), "type" => $record['type']);
+                break;
+            }
 		}
-		return (isset($redirectLocation)) ? array("url" => ( strpos($record['location'], "http") === 0 ) ? $redirectLocation : UrlHelper::getSiteUrl($redirectLocation), "type" => $record['type']) : false;
+		return (isset($recordMatch)) ? $recordMatch : false;
 	}
 
 	public function newRedirect($attributes = array())
@@ -114,4 +124,9 @@ class RedirectManagerService extends BaseApplicationComponent
 	{
 
 	}
+
+    private function isCaseInsensitive(){
+        $ignoreCase = craft()->config->get('ignoreCase', 'redirectmanager');
+        return ($ignoreCase != null && $ignoreCase == true);
+    }
 }
