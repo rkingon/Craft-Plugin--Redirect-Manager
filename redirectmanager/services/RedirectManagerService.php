@@ -43,12 +43,14 @@ class RedirectManagerService extends BaseApplicationComponent
 			if ($regex_match) {
 				if(preg_match($record['uri'], $uri)){
 					$redirectLocation = preg_replace($record['uri'], $record['location'], $uri);
+					break;
 				}
 			} else {
 				// Standard match
 				if ($record['uri'] == $uri)
 				{
 					$redirectLocation = $record['location'];
+					break;
 				}
 			}
 		}
