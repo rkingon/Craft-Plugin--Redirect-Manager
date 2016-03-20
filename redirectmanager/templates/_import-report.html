@@ -18,6 +18,14 @@
 
 {% set content %}
     <style>
+        .msg--success {
+            color: #32bd2f;
+        }
+
+        .msg--failed {
+            color: #990000;
+        }
+
         .table__container {
             border-spacing: 1em 0.5em;
             width: 100%;
@@ -49,8 +57,8 @@
     {% set arrSuccess = craft.redirectManager.getImportResultSuccess %}
     {% set arrFailed = craft.redirectManager.getImportResultFailed %}
     <ul>
-        <li><strong>{{ arrSuccess | length }}</strong> records imported successfully</li>
-        <li><strong>{{ arrFailed | length }}</strong> records failed to import</li>
+        <li class="msg--success"><strong>{{ arrSuccess | length }}</strong> records imported successfully</li>
+        <li class="msg--failed"><strong>{{ arrFailed | length }}</strong> records failed to import</li>
     </ul>
     {% if arrSuccess | length %}
         <h2>Redirects imported successfully</h2>
