@@ -32,3 +32,7 @@ Capture groups are just used by the standard $1, $2, ect. within your "Redirect 
 **Redirect To:** "shop$1"
 
 *Note, we do not include the "/" because it will be part of the capture group*
+
+#### Import by CSV
+Multiple records can be imported by generating a CSV of redirects. 
+See 'example.csv' for a starting point.
