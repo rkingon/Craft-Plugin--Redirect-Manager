@@ -1,0 +1,62 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% set redirectId = null %}
+{% set redirectRecord = (redirectId) ? craft.redirectManager.getRedirectById(redirectId) : null %}
+
+{% if redirectId and not redirectRecord %}
+	{% exit 404 %}
+{% endif %}
+
+{% set title = "Import Redirects"|t %}
+{% set crumbs = [
+	{ label: "Redirect Manager"|t, url: url('redirectmanager') }
+] %}
+
+
+
+{% set content %}
+
+    <div class="">
+        <h2>Instructions</h2>
+        <p>
+            Your CSV data should be in the following format:<br>
+        </p>
+        <pre style="font-family: Courier">uri-to-match,/location-to-redirect-to,redirect type (301 or 302)
+another-uri-to-match,/another-location-to-redirect-to,301
+        </pre>
+    </div>
+
+	<form method="post" action="" accept-charset="UTF-8" enctype="multipart/form-data">
+		{{ getCsrfInput() }}
+		<input type="hidden" name="action" value="redirectManager/importRedirects" />
+		<input type="hidden" name="redirect" value="redirectmanager" />
+
+		<p>
+			{{ forms.textareaField({
+				label: 'CSV Data'|t,
+				required: true,
+				name: 'redirectRecord[csv]',
+				value: redirectRecord ? redirectRecord.csv : null,
+				errors: redirectRecord ? redirectRecord.errors('csv') : null,
+				instructions: "Paste your CSV data here",
+                rows: 20,
+			}) }}
+		</p>
+        <p>
+            {{ forms.lightswitchField({
+				label: 'Replace Matching Records?'|t,
+				required: true,
+				name: 'redirectRecord[overwrite]',
+				value: redirectRecord ? redirectRecord.overwrite : null,
+				errors: redirectRecord ? redirectRecord.errors('overwrite') : null,
+				instructions: "Do you want to overwrite an existing record if the URI matches?",
+            }) }}
+        </p>
+
+		<div class="buttons">
+			<input type="submit" class="btn submit" value="{{ 'Import'|t }}">
+		</div>
+	</form>
+
+{% endset %}

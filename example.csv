@@ -1,0 +1,2 @@
+uri-to-match,/location-to-redirect-to,302
+another-uri-to-match,/another-location-to-redirect-to,301

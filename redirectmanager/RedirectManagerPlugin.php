@@ -59,7 +59,9 @@ class RedirectManagerPlugin extends BasePlugin
 	{
 		return array(
 			'redirectmanager\/new' => 'redirectmanager/_edit',
-			'redirectmanager\/(?P<redirectId>\d+)' => 'redirectmanager/_edit'
+			'redirectmanager\/(?P<redirectId>\d+)' => 'redirectmanager/_edit',
+			'redirectmanager\/import' => 'redirectmanager/_import',
+			'redirectmanager\/import/report' => 'redirectmanager/_import-report',
 		);
 	}
 	public function onAfterInstall()

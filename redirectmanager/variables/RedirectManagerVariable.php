@@ -14,5 +14,14 @@ class RedirectManagerVariable
 	{
 		return craft()->redirectManager->getRedirectById($id);
 	}
-	
+
+    public function getImportResultSuccess()
+    {
+        return craft()->httpSession->get('redirectmanager.result')['success'];
+    }
+
+    public function getImportResultFailed()
+    {
+        return craft()->httpSession->get('redirectmanager.result')['failed'];
+    }
 }

@@ -57,6 +57,20 @@ class RedirectManagerService extends BaseApplicationComponent
 		return (isset($redirectLocation)) ? array("url" => ( strpos($record['location'], "http") === 0 ) ? $redirectLocation : UrlHelper::getSiteUrl($redirectLocation), "type" => $record['type']) : false;
 	}
 
+	public function processCSV($csv)
+	{
+		if ($csv == '') {
+			throw new Exception('The CSV data appears to be missing.');
+		}
+		// Replace newlines with commas
+		$results = preg_replace("/[\n\r]+/", ',', $csv);
+
+		// Parse the CSV file and split into an associative array
+		$results = array_chunk(str_getcsv($results, ','), 3);
+
+		return $results;
+	}
+
 	public function newRedirect($attributes = array())
 	{
 		$model = new RedirectManagerModel();
@@ -101,12 +115,71 @@ class RedirectManagerService extends BaseApplicationComponent
 		}
 	}
 
+    public function saveRedirects($arrRedirects)
+    {
+        // Loop through and save (track the outcome for each record)
+        $arrResult = [
+            'success' => [],
+            'failed' => []
+        ];
+
+        foreach ($arrRedirects as $redirect) {
+
+            $model = $this->newRedirect([
+                'uri' => $redirect[0],
+                'location' => $redirect[1],
+                'type' => $redirect[2]
+            ]);
+
+            if ($this->saveRedirect($model)) {
+                $arrResult['success'][] = $redirect;
+            } else {
+                if ($this->recordExistsAndShouldOverwrite($model)) {
+
+                    $record = $this->findByAttributes(['uri' => $model->getAttribute('uri')]);
+
+                    $model->setAttribute('id', $record->getAttribute('id'));
+
+                    if ($this->saveRedirect($model)) {
+                        $arrResult['success'][] = $redirect;
+                    } else {
+                        $redirect['failureMessageArray'] = $model->getErrors();
+                        $arrResult['failed'][] = $redirect;
+                    }
+                } else {
+                    $redirect['failureMessageArray'] = $model->getErrors();
+                    $arrResult['failed'][] = $redirect;
+                }
+            }
+
+
+        }
+
+        return $arrResult;
+
+    }
+
 	public function deleteRedirectById($id)
 	{
 		return $this->redirectRecord->deleteByPk($id);
 	}
 
-	private function _processRegexMatch($uriToMatch, $uri)
+    public function findByAttributes($attributes,$condition='',$params=array())
+    {
+        return $this->redirectRecord->findByAttributes($attributes, $condition, $params);
+    }
+
+    /**
+     * @param $model
+     *
+     * @return bool
+     */
+    public function recordExistsAndShouldOverwrite($model)
+    {
+        return ($model->getError('uri') != null && craft()->request->getPost('redirectRecord')['overwrite']);
+    }
+
+    private function _processRegexMatch($uriToMatch, $uri)
 	{
 		preg_match("/^#(.+)#$/", $uriToMatch, $matches);
 		// return ($matches[1] == $uri) ;

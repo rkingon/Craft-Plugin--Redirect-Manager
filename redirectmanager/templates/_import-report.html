@@ -1,0 +1,118 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% set redirectId = null %}
+{% set redirectRecord = (redirectId) ? craft.redirectManager.getRedirectById(redirectId) : null %}
+
+{% if redirectId and not redirectRecord %}
+	{% exit 404 %}
+{% endif %}
+
+{% set title = "Import Report"|t %}
+{% set crumbs = [
+	{ label: "Redirect Manager"|t, url: url('redirectmanager') },
+	{ label: "Importer"|t, url: url('redirectmanager/import') }
+] %}
+
+
+
+{% set content %}
+    <style>
+        .msg--success {
+            color: #32bd2f;
+        }
+
+        .msg--failed {
+            color: #990000;
+        }
+
+        .table__container {
+            border-spacing: 1em 0.5em;
+            width: 100%;
+        }
+
+        .table__col--uri,
+        .table__col--location,
+        .table__col--type,
+        .table__col--reason {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .table__col--uri,
+        .table__col--location {
+            width: 40%;
+            max-width: 50px;
+        }
+
+        .table__col--type {
+            max-width: 5%;
+        }
+
+        .table__col--reason {
+            max-width: 15%;
+        }
+    </style>
+    {% set arrSuccess = craft.redirectManager.getImportResultSuccess %}
+    {% set arrFailed = craft.redirectManager.getImportResultFailed %}
+    <ul>
+        <li class="msg--success"><strong>{{ arrSuccess | length }}</strong> records imported successfully</li>
+        <li class="msg--failed"><strong>{{ arrFailed | length }}</strong> records failed to import</li>
+    </ul>
+    {% if arrSuccess | length %}
+        <h2>Redirects imported successfully</h2>
+        <table class="table__container">
+            <thead>
+                <tr>
+                    <th>URI</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+        {% for result in arrSuccess %}
+            <tr>
+                <td class="table__col--uri" title="{{ result[0] }}">{{ result[0] }}</td>
+                <td class="table__col--location" title="{{ result[1] }}">{{ result[1] }}</td>
+                <td class="table__col--type">{{ result[2] }}</td>
+                <td class="table__col--reason">&nbsp;</td>
+            </tr>
+
+        {% endfor %}
+        </table>
+    {% endif %}
+    {% if arrFailed | length %}
+        <h2>Redirects failed</h2>
+        <table class="table__container">
+            <thead>
+                <tr>
+                    <th>URI</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+        {% for result in arrFailed %}
+            <tr>
+                <td class="table__col--uri" title="{{ result[0] }}">{{ result[0] }}</td>
+                <td class="table__col--location" title="{{ result[1] }}">{{ result[1] }}</td>
+                <td class="table__col--type">{{ result[2] }}</td>
+                <td class="table__col--reason">
+                    {% for block in result['failureMessageArray'] %}
+                        {%for error in block|keys %}
+                            {% if error == 'uri' %}
+                                The URI already exists
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </td>
+            </tr>
+
+        {% endfor %}
+        </table>
+    {% endif %}
+    <div class="buttons">
+        <a href="{{ url('redirectmanager') }}" class="btn">{{ "Finished"|t }}</a>
+    </div>
+{% endset %}
