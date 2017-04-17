@@ -9,6 +9,9 @@ Keep all your 301/302 managed within Craft. Very useful when using NGINX because
 
 ## Usage
 
+#### NOTE:
+The template for the route that you are redirecting from **must not exist** in order to successfully set up the redirect.
+
 #### Regex
 To use regex, simply wrap your "Match Uri" field with "#" (Example: "#^products(.*)#" will match products and products/anything-else)
 ##### Regex Eamples
