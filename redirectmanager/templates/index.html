@@ -9,7 +9,9 @@
 	<p id="noredirects"{% if redirects|length %} class="hidden"{% endif %}>
 		{{ "No redirects exist yet."|t }}
 	</p>
-
+<div class="buttons">
+		<a href="{{ url('redirectmanager/new') }}" class="btn add icon">{{ "New Redirect"|t }}</a>
+	</div>
 	{% if redirects|length %}
 		<div class="tableview">
 			<table id="redirects" class="data fullwidth">
@@ -32,12 +34,13 @@
 
 				</tbody>
 			</table>
+<div class="buttons">
+		<a href="{{ url('redirectmanager/new') }}" class="btn add icon">{{ "New Redirect"|t }}</a>
+	</div>
 		</div>
 	{% endif %}
 	
-	<div class="buttons">
-		<a href="{{ url('redirectmanager/new') }}" class="btn add icon">{{ "New Redirect"|t }}</a>
-	</div>
+	
 
 {% endset %}
 
