@@ -32,7 +32,7 @@ class RedirectManagerPlugin extends BasePlugin
 	public function init()
 	{
 		// redirects only take place out of the CP
-		if(craft()->request->isSiteRequest() && !craft()->request->isLivePreview())
+		if(craft()->request->isSiteRequest() && !craft()->request->isLivePreview() && !craft()->isConsole())
 		{
 			// only init if it's a legit 404
 			craft()->onException = function(\CExceptionEvent $event)
