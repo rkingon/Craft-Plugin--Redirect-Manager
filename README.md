@@ -1,3 +1,5 @@
+# This project is no longer maintained. Craft3 is awesome and hopefully someone writes something similar for it.
+
 # Redirect Manager for Craft
 
 Keep all your 301/302 managed within Craft. Very useful when using NGINX because you don't have an htaccess file! :(
